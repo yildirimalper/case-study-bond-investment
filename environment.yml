@@ -1,0 +1,11 @@
+name: bond-case-study
+channels:
+  - defaults
+dependencies:
+  - python
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scipy
+  - pycountry
