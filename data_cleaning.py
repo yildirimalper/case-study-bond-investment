@@ -4,8 +4,8 @@ from pathlib import Path
 import pycountry
 import matplotlib.pyplot as plt
 import seaborn as sns
-#import pyarrow as pa
-#import pyarrow.parquet as pq
+from utils.get_country import get_country
+from utils.correct_avg_and_3m import correct_avg_and_3m
 
 # set the project directory for easy access to the data
 PROJECT_DIR = Path().resolve()
@@ -19,29 +19,6 @@ cds_2y  = pd.read_excel(PROJECT_DIR / 'original_data/cds_by_countries.xlsx', she
 # =============================================================================
 # CREDIT DEFAULT SWAPS SPREAD DATA CLEANING
 # =============================================================================
-
-def correct_avg_and_3m(df):
-    """
-    This function corrects the 'Avg' and '3M +/-' columns in a dataframe.
-    If 'Avg' is not between 'Low' and 'High', but '3M +/-' is   , it swaps 'Avg' and '3M +/-'.
-
-    Parameters:
-    df (pandas.DataFrame): The dataframe to correct.
-
-    Returns:
-    df (pandas.DataFrame): The corrected dataframe.
-    """
-    
-    # to iterate over the rows
-    for i, row in df.iterrows():
-        # if everything is correct, continue
-        if row['Low'] <= row['Avg'] <= row['High']:
-            continue
-        # if values are incorrect
-        elif row['Low'] <= row['3M +/-'] <= row['High']:
-            df.loc[i, 'Avg'], df.loc[i, '3M +/-'] = row['3M +/-'], row['Avg']
-    
-    return df
 
 # apply the function to fix the mistaken 'Avg' and '3M +/-' values
 cds_10y = correct_avg_and_3m(cds_10y)
@@ -60,40 +37,29 @@ merged_cds = cds_10y.merge(cds_5y, left_on='Name_10y', right_on='Name_5y').merge
 # BONDS DATA CLEANING
 # =============================================================================
 
+## Issues with Maturity:
 # delete bonds with maturity date is older than November 24, 2023
 bonds['Maturity'] = pd.to_datetime(bonds['Maturity'], format='%d.%m.%Y', errors='coerce')
 date = pd.to_datetime('2023-11-24')
 bonds = bonds[bonds['Maturity'] >= date]
 
+# Drop rows where the 'Maturity' year is greater than 2054
+# otherwise, it even extends to year 2122
+bonds = bonds[bonds['Maturity'].dt.year <= 2054]
+
+## Issues with Empty Columns:
 # drop the empty columns
 bonds.drop(columns=['BVAL Ask Yld', 'BVAL Bid Yld'], inplace=True)
 
-def get_country(issuer_name):
-    """
-    This function takes an issuer name as input and returns the country name if it is found in the issuer name.
-    It uses the pycountry module to get a list of all countries.
+## Issues with Yld to Mty (Ask) and Yld to Mty (Bid):
+# Drop rows where either 'Yld to Mty (Ask)' or 'Yld to Mty (Bid)' is missing
+bonds = bonds.dropna(subset=['Yld to Mty (Ask)', 'Yld to Mty (Bid)'])
 
-    Parameters:
-    issuer_name (str): The name of the issuer.
+# Drop the rows where 'Yld to Mty (Ask)' or 'Yld to Mty (Bid)' is "#N/A Field Not Applicable"
+values_to_drop = ['#N/A Field Not Applicable']
+bonds = bonds[~bonds[["Yld to Mty (Ask)", "Yld to Mty (Bid)"]].isin(values_to_drop).any(axis=1)]
 
-    Returns:
-    str: The name of the country if found in the issuer name, None otherwise.
-    """
-    
-    # convert the issuer name to lowercase for case insensitive comparison
-    issuer_name = issuer_name.lower()
-    
-    # iterate over all countries provided by the pycountry module
-    for country in pycountry.countries:
-        # convert the country name to lowercase before checking for a match
-        # this ensures that the comparison is case insensitive
-        if country.name.lower() in issuer_name:
-            # if a match is found, return the name of the country
-            return country.name
-    
-    # if no match is found, return None
-    return None
-
+## Add Country Pairings to Merge with CDS Data:
 # apply the function to create the 'Country' column
 bonds['Country'] = bonds['Issuer Name'].apply(get_country)
 
@@ -114,5 +80,19 @@ del missing_issuers_country_pairings
 # finally, merge CDS data and bonds data into a single dataframe
 final_df = bonds.merge(merged_cds, left_on='Country', right_on='Name_10y')
 
+# to check if there any trouble with the merge or data in general
+final_df.info()
+
+## final cleaning
+# remove the '*' character and convert to numeric
+for col in ['Spread_10y', 'Spread_5y', 'Spread_2y']:
+    final_df[col] = pd.to_numeric(datafinal_df[col].str.replace('*', ''), errors='coerce')
+
+# remove the '+' character and convert to numeric
+final_df['Change_5y'] = pd.to_numeric(final_df['Change_5y'].str.replace('+', ''), errors='coerce')
+
 # export the data to Excel
-final_df.to_excel(PROJECT_DIR / "processed_data" / "bonds-data.xlsx")
+final_df.to_excel(PROJECT_DIR / "processed_data" / "bonds-data.xlsx", index=False)
+
+#TODO: #N/A Field Not Applicable in "Series" column, drop it,
+#TODO: "BGG Composite" switch "NR" to None
