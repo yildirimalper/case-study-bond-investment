@@ -11,7 +11,7 @@
 |   ├── bond_math.py
 |   ├── correct_avg_and_3m.py
 |   ├── get_country.py
-├── assets/
+├── figures/
 |   ├── yield_curve.png
 ├── data_cleaning.py
 ├── bond-strategy-presentation.pptx

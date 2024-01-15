@@ -64,7 +64,7 @@ bonds = bonds[~bonds[["Yld to Mty (Ask)", "Yld to Mty (Bid)"]].isin(values_to_dr
 bonds['Country'] = bonds['Issuer Name'].apply(get_country)
 
 # read the missing pairings data to fill the missing values in the 'Country' column
-missing_issuers_country_pairings = pd.read_excel('missing_issuers_country_pairings.xlsx', index_col=0)
+missing_issuers_country_pairings = pd.read_excel('original_data/missing_issuers_country_pairings.xlsx', index_col=0)
 
 # set 'Issuer Name' as the index in both dataframes for filling the missing values
 bonds.set_index('Issuer Name', inplace=True)
