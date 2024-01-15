@@ -3,6 +3,7 @@
 # |--- calculate_macaulay_duration()
 # |--- calculate_modified_duration()
 # |--- calculate_bond_convexity()
+# |--- calculate_dv01()
 
 # ==============================================================================================================
 # 1. calculate_bond_price()
@@ -159,3 +160,37 @@ def calculate_bond_convexity(face_value, years_to_maturity, ytm_bid, ytm_ask, co
         convexity = total_periods * (total_periods + 1) / ((1 + (ytm / 100))**total_periods)
 
     return round(convexity, 2)
+
+# ==============================================================================================================
+# 5. calculate_dv01()
+# ==============================================================================================================
+
+def calculate_dv01(face_value, coupon_rate, years_to_maturity, ytm, basis_point_change=1):
+    """
+    Calculate the DV01 (dollar value of 01) for a bond.
+
+    Parameters:
+    - face_value (float): The face value of the bond.
+    - coupon_rate (float): The annual coupon rate.
+    - years_to_maturity (int): The number of years until the bond matures.
+    - ytm (float): The Yield to Maturity (YTM) for the bond.
+    - basis_point_change (int, optional): The change in yield in basis points. Default is 1.
+
+    Returns:
+    - float: The calculated DV01 for the bond.
+    """
+
+    # Calculate the initial bond price
+    initial_price = calculate_bond_price(face_value, coupon_rate, years_to_maturity, ytm)
+
+    # Calculate the bond price after a 1 basis point increase in yield
+    new_ytm = ytm + (basis_point_change / 100)
+    new_price = calculate_bond_price(face_value, coupon_rate, years_to_maturity, new_ytm)
+
+    # Calculate the change in bond price
+    price_change = new_price - initial_price
+
+    # Calculate DV01
+    dv01 = price_change / basis_point_change
+
+    return dv01
