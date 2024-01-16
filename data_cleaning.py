@@ -78,7 +78,7 @@ bonds.reset_index(inplace=True)
 del missing_issuers_country_pairings
 
 # finally, merge CDS data and bonds data into a single dataframe
-final_df = bonds.merge(merged_cds, left_on='Country', right_on='Name_10y')
+final_df = bonds.merge(merged_cds, left_on='Country', right_on='Name_10y', how='left')
 
 # to check if there any trouble with the merge or data in general
 final_df.info()
@@ -86,13 +86,15 @@ final_df.info()
 ## final cleaning
 # remove the '*' character and convert to numeric
 for col in ['Spread_10y', 'Spread_5y', 'Spread_2y']:
-    final_df[col] = pd.to_numeric(datafinal_df[col].str.replace('*', ''), errors='coerce')
+    final_df[col] = pd.to_numeric(final_df[col].str.replace('*', ''), errors='coerce')
 
 # remove the '+' character and convert to numeric
 final_df['Change_5y'] = pd.to_numeric(final_df['Change_5y'].str.replace('+', ''), errors='coerce')
 
-# export the data to Excel
-final_df.to_excel(PROJECT_DIR / "processed_data" / "bonds-data.xlsx", index=False)
+# replace "not rated" and "NaN" to None
+final_df['BBG Composite'] = final_df['BBG Composite'].replace('NR', np.nan)
+final_df['Series'] = final_df['Series'].replace('#N/A Field Not Applicable', np.nan)
 
-#TODO: #N/A Field Not Applicable in "Series" column, drop it,
-#TODO: "BGG Composite" switch "NR" to None
+# export the data to Excel and pickle files
+final_df.to_excel(PROJECT_DIR / "processed_data" / "bonds-data.xlsx", index=False)
+final_df.to_pickle(PROJECT_DIR / "processed_data" / "bonds-data.pkl")
