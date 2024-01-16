@@ -12,8 +12,10 @@
 |   ├── correct_avg_and_3m.py
 |   ├── get_country.py
 ├── figures/
-|   ├── yield_curve.png
 ├── data_cleaning.py
+├── bond_analysis.py
+├── yield_curve.py
+├── visualizations.py
 ├── bond-strategy-presentation.pptx
 ├── bond-strategy-presentation.pdf
 ├── environment.yml

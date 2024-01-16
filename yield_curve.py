@@ -46,38 +46,7 @@ plt.legend(fontsize=12)
 plt.grid(True)
 
 # Save the figure for inclusion in your presentation
-plt.savefig('assets/yield_curve.png', dpi=300, bbox_inches='tight')
+plt.savefig('figures/yield_curve.png', dpi=300, bbox_inches='tight')
 
 # Show the plot
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Plot the smoothed curve
-plt.plot(x_smooth, y_smooth_ask, color='b', label='YTM Ask (Smoothed)')
-plt.plot(x_smooth, y_smooth_bid, color='g', label='YTM Bid (Smoothed)')
-
-plt.xlim(left=1)
-plt.title('Yield Curve as of 24 November 2023 (United States)')
-plt.xlabel('Time to Maturity (Years)')
-plt.ylabel('Yield to Maturity (%)')
-plt.legend()
-plt.grid(True)
-plt.show()
-
-# #3AEFCC
