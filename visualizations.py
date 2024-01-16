@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import seaborn as sns
 from pathlib import Path
+import yfinance as yf
 
 PROJECT_DIR = Path().resolve()
 
@@ -92,4 +93,35 @@ y_ticks = plt.gca().get_yticks()
 plt.gca().set_yticklabels(['{:.0f}%'.format(y) for y in y_ticks])
 
 # Show the plot
+plt.show()
+
+# =============================================================================
+# MSCI INDEX PLOTLINE
+# =============================================================================
+world_data = yf.download("^WORLD", start="2018-01-01", end="2024-01-01")
+em_data = yf.download("^EM", start="2018-01-01", end="2024-01-01")
+us_data = yf.download("^GSPC", start="2018-01-01", end="2024-01-01")
+
+plt.figure(figsize=(12, 6))
+sns.set(style="whitegrid")
+
+# Plot MSCI World
+plt.subplot(3, 1, 1)
+plt.plot(world_data['Adj Close'], label='MSCI World', color='blue')
+plt.title('MSCI World Index')
+plt.legend()
+
+# Plot MSCI Emerging Markets
+plt.subplot(3, 1, 2)
+plt.plot(em_data['Adj Close'], label='MSCI EM', color='green')
+plt.title('MSCI Emerging Markets Index')
+plt.legend()
+
+# Plot US Indices (S&P 500)
+plt.subplot(3, 1, 3)
+plt.plot(us_data['Adj Close'], label='S&P 500', color='red')
+plt.title('S&P 500 Index')
+plt.legend()
+
+plt.tight_layout()
 plt.show()

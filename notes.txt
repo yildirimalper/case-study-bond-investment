@@ -1,6 +1,0 @@
-# pip install blpapi --index-url=https://bcms.bloomberg.com/pip/simple/
-# pip install xbbg
-# pip install pycountry
-# pip install scapy
-# pip install googlesearch-python beautifulsoup4 requests
-# !python -m spacy download en_core_web_sms
