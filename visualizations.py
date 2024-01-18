@@ -4,6 +4,8 @@ import matplotlib.cm as cm
 import seaborn as sns
 from pathlib import Path
 import yfinance as yf
+import warnings
+warnings.filterwarnings('ignore')
 
 PROJECT_DIR = Path().resolve()
 
@@ -82,6 +84,54 @@ plt.legend()
 
 # Add title and labels
 plt.title('Inflation Forecasts (%, YoY)', fontsize=16)
+
+# Add gridlines for better readability
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+# Set x-ticks and labels
+plt.xticks(ticks=range(2018, 2026), labels=range(2018, 2026))
+# Set y-ticks and labels with % sign
+y_ticks = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['{:.0f}%'.format(y) for y in y_ticks])
+
+# Show the plot
+plt.show()
+
+# =============================================================================
+# GDP FORECASTS USING OECD DATA
+# =============================================================================
+
+wb = pd.read_excel(PROJECT_DIR / 'original_data/wb_gdp.xls')
+oecd = pd.read_excel(PROJECT_DIR / 'original_data/oecd_gdp_forecasts.xlsx')
+
+# Filter the dataframe for the selected countries
+selected_countries = ["United States", "G20", "Russia", "Brazil", "South Africa"]
+filtered_oecd = oecd[oecd['Country'].isin(['United States', 'G20', 'Russia', 'Brazil', 'South Africa'])]
+
+# Create a new colormap instance
+cmap = cm.get_cmap('winter')
+
+# Create a new figure
+plt.figure(figsize=(10, 6))
+
+# Plot the data for each country
+for i, country in enumerate(selected_countries):
+    country_data = filtered_oecd[filtered_oecd['Country'] == country]
+    
+    # Get a color from the colormap
+    color = cmap(i / len(selected_countries))
+    
+    # Plot solid line for 2018-2023
+    plt.plot(country_data.columns[1:7], country_data.values[0][1:7], label=country, color=color, linewidth=1.5)
+    
+    # Plot dashed line for 2023-2025
+    plt.plot(country_data.columns[6:9], country_data.values[0][6:9], linestyle='dashed', color=color, linewidth=1.5)
+
+# Add a legend
+plt.legend()
+
+# Add title and labels
+plt.title('GDP Growth Forecasts (%, YoY)', fontsize=16)
 
 # Add gridlines for better readability
 plt.grid(axis='y', linestyle='--', alpha=0.7)
