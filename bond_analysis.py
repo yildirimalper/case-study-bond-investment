@@ -22,21 +22,21 @@ data['Face Value'] = 1000
 # =============================================================================
 # Calculate Buy Price
 data['Buy Price'] = data.apply(lambda row: calculate_bond_price(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'],
     buying=True
 ), axis=1)
 
 # Calculate Sell Price
 data['Sell Price'] = data.apply(lambda row: calculate_bond_price(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'], 
     buying=False
 ), axis=1)
 
@@ -45,21 +45,21 @@ data['Sell Price'] = data.apply(lambda row: calculate_bond_price(
 # =============================================================================
 # Calculate Macaulay Duration for Buying
 data['Macaulay Duration (Buy)'] = data.apply(lambda row: calculate_macaulay_duration(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'],
     buying=True
 ), axis=1)
 
 # Calculate Macaulay Duration for Selling
 data['Macaulay Duration (Sell)'] = data.apply(lambda row: calculate_macaulay_duration(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'], 
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'],
     buying=False
 ), axis=1)
 
@@ -68,21 +68,21 @@ data['Macaulay Duration (Sell)'] = data.apply(lambda row: calculate_macaulay_dur
 # =============================================================================
 # Calculate Modified Duration for Buying
 data['Modified Duration (Buy)'] = data.apply(lambda row: calculate_modified_duration(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'], 
     buying=True
 ), axis=1)
 
 # Calculate Modified Duration for Selling
 data['Modified Duration (Sell)'] = data.apply(lambda row: calculate_modified_duration(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'], 
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'], 
     buying=False
 ), axis=1)
 
@@ -91,21 +91,21 @@ data['Modified Duration (Sell)'] = data.apply(lambda row: calculate_modified_dur
 # =============================================================================
 # Calculate Convexity for Buying
 data['Convexity (Buy)'] = data.apply(lambda row: calculate_bond_convexity(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'],  
     buying=True
 ), axis=1)
 
 # Calculate Convexity for Selling
 data['Convexity (Sell)'] = data.apply(lambda row: calculate_bond_convexity(
-    face_value=row['Face Value'],  # Replace with the actual column name
+    face_value=row['Face Value'],
     years_to_maturity=row['Years to Maturity'],
-    ytm_bid=row['Yld to Mty (Bid)'],
-    ytm_ask=row['Yld to Mty (Ask)'],
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    ytm_bid=row['YTM - Bid'],
+    ytm_ask=row['YTM - Ask'],
+    coupon_rate=row['Cpn'],
     buying=False
 ), axis=1)
 
@@ -114,11 +114,17 @@ data['Convexity (Sell)'] = data.apply(lambda row: calculate_bond_convexity(
 # =============================================================================
 # Calculate DV01 for each bond
 data['DV01'] = data.apply(lambda row: calculate_dv01(
-    face_value=row['Face Value'],  # Replace with the actual column name
-    coupon_rate=row['Cpn'],  # Replace with the actual column name
+    face_value=row['Face Value'],
+    coupon_rate=row['Cpn'], 
     years_to_maturity=row['Years to Maturity'],
-    ytm=row['Yld to Mty (Bid)'],  # You can choose Ask or Bid based on your preference
+    ytm=row['YTM - Bid'] 
 ), axis=1)
+
+# =============================================================================
+# 6. Compute the Bid-Ask Spread
+# =============================================================================
+data['Buy-Sell Spread'] = data['Buy Price'] - data['Sell Price']
+data['Percentage Spread'] = (data['Buy-Sell Spread'] / data['Buy Price']) * 100
 
 
 # save the data to an Excel and pickle file
