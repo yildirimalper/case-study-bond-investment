@@ -163,12 +163,12 @@ def calculate_bond_convexity(face_value, years_to_maturity, ytm_bid, ytm_ask, co
     # Determine which YTM to use based on buying or selling
     ytm = ytm_ask if buying else ytm_bid
     
-    if coupon_rate is not None and coupon_rate != 0:
+    if coupon_rate is not None and coupon_rate != 0:    
         # Coupon-bearing bond
         coupon_payment = (face_value * coupon_rate / 100) / periods_per_year  # Adjust for compounding frequency
 
-        convexity = sum([(coupon_payment * (i * (i + 1))) / (1 + (ytm / (100 * periods_per_year)))**i for i in range(1, total_periods + 1)])
-        convexity += (total_periods * (total_periods + 1) * face_value) / (1 + (ytm / (100 * periods_per_year)))**total_periods
+        convexity = sum([(coupon_payment * (i/periods_per_year) * ((i/periods_per_year) + 1)) / (1 + (ytm / (100 * periods_per_year)))**(i/periods_per_year) for i in range(1, total_periods + 1)])
+        convexity += (years_to_maturity * (years_to_maturity + 1) * face_value) / (1 + (ytm / (100 * periods_per_year)))**years_to_maturity
         convexity /= (1 + (ytm / (100 * periods_per_year)))**2
         convexity /= face_value
     else:
