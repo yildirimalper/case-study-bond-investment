@@ -1,5 +1,4 @@
-# Ignore __pycache__ and .ipynb_checkpoints folders
 utils/__pycache__/
 .ipynb_checkpoints/
 reports/
-reports
+auxiliary/
