@@ -3,7 +3,7 @@ import numpy as np
 from pathlib import Path
 from utils.bond_math import calculate_bond_price, calculate_macaulay_duration, calculate_modified_duration, calculate_bond_convexity, calculate_dv01
 
-# set the project directory for easy access to the data
+# Set the project directory for easy access to the data
 PROJECT_DIR = Path().resolve()
 
 # load the data
@@ -126,7 +126,9 @@ data['DV01'] = data.apply(lambda row: calculate_dv01(
 data['Buy-Sell Spread'] = data['Buy Price'] - data['Sell Price']
 data['Percentage Spread'] = (data['Buy-Sell Spread'] / data['Buy Price']) * 100
 
-
+# =============================================================================
+# 7. Export data
+# =============================================================================
 # save the data to an Excel and pickle file
 data.to_excel(PROJECT_DIR / "processed_data" / "bonds-analyzed.xlsx", index=False)
 data.to_pickle(PROJECT_DIR / "processed_data" / "bonds-analyzed.pkl")

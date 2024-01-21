@@ -1,4 +1,5 @@
 import pandas as pd
+from utils.bond_math import *
 
 def calculate_portfolio_metrics(portfolio_df, weight_col, num_bonds_col, price_col, ytm_col, maturity_col, coupon_col):
     """
@@ -35,13 +36,19 @@ def calculate_portfolio_metrics(portfolio_df, weight_col, num_bonds_col, price_c
                                                                             row[maturity_col], row[ytm_col]), axis=1)
     total_dv01 = (portfolio_df[weight_col] / 100 * portfolio_df['dv01']).sum()
 
-    # Construct the result dictionary
-    portfolio_metrics = {
-        'YTM': weighted_ytm,
-        'Duration': weighted_duration,
-        'Modified Duration': weighted_modified_duration,
-        'Convexity': weighted_convexity,
-        'DV01': total_dv01
-    }
+    # Calculate weighted averages for additional metrics
+    weighted_buy_price = (portfolio_df[weight_col] / 100 * portfolio_df['Buy Price']).sum()
+    weighted_years_to_maturity = (portfolio_df[weight_col] / 100 * portfolio_df['Years to Maturity']).sum()
+    weighted_percentage_spread = (portfolio_df[weight_col] / 100 * portfolio_df['Percentage Spread']).sum()
+    weighted_cpn = (portfolio_df[weight_col] / 100 * portfolio_df['Cpn']).sum() 
+    weighted_spread_5y = (portfolio_df[weight_col] / 100 * portfolio_df['Spread_5y']).sum()
+    weighted_pd_5y_pct = (portfolio_df[weight_col] / 100 * portfolio_df['PD_5y_pct']).sum()
 
-    return portfolio_metrics
+    # Add the new metric to the DataFrame
+    portfolio_metrics_df = pd.DataFrame({
+        'Metric': ['YTM', 'Price', 'Coupon', 'Time-to-Maturity', 'Duration', 'Modified Duration', 'Convexity', 'DV01', 'Pct Bid-Ask Spread', '5-yr CDS Spread', 'PD_5y_pct'],
+        'Value': [weighted_ytm, weighted_buy_price, weighted_cpn, weighted_years_to_maturity, weighted_duration, weighted_modified_duration, weighted_convexity, total_dv01, weighted_percentage_spread, weighted_spread_5y, weighted_pd_5y_pct]
+    })
+    portfolio_metrics_df['Value'] = portfolio_metrics_df['Value'] * 100
+
+    return portfolio_metrics_df

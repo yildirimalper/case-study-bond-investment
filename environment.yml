@@ -1,6 +1,7 @@
 name: bond-case-study
 channels:
-  - defaults
+  - nodefaults
+  - conda-forge
 dependencies:
   - python
   - numpy
@@ -9,3 +10,8 @@ dependencies:
   - seaborn
   - scipy
   - pycountry
+  - pip
+  - pip:
+      - yfinance
+      - mplfinance
+      - pandas_ta
